@@ -1,3 +1,4 @@
+//ще потрібно тестувати код на помилки та можливо переписати фрагменти коду в методи для зручності
 using System;
 using System.Collections.Generic;
 using System.Linq;
