@@ -1,4 +1,4 @@
-//ще потрібно тестувати код на помилки та можливо переписати фрагменти коду в методи для зручності
+//ще тестуватиму на пошук помилок
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 namespace project
 {
     internal class Program
-    {   
-        static void Addition(int limit, int[] array, out int[,] main_array) // генерація варіантів для додавання
+    {
+        static void CreateArray(int limit, int[] array, int variants_length, string operation, out int[,] main_array) //створення масиву за заданими лімітами
         {
-            int a, b, k = 0;
-
-            int variants_length = (limit / 2) * (limit - 1); // формула для підрахунку загальної кількості варіантів 
+            int a,b,k = 0;
             main_array = new int[variants_length, 2];
+            bool condition = false;
 
             for (int i = 0; i < limit; i++)
             {
@@ -22,97 +21,24 @@ namespace project
                 {
                     a = array[i];
                     b = array[j];
-                    if ((a + b > limit) || a == 0 || b == 0)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        main_array[k, 0] = a;
-                        main_array[k, 1] = b;
-                        k++;
-                    }
-                }
-            }
-        } 
-        static void Subtraction(int limit, int[] array, out int[,] main_array) // генерація варіантів для віднімання
-        {
-            int a, b, k = 0;
-            int variants_length = ((limit / 2) * (limit - 1)); // формула для підрахунку загальної кількості варіантів 
-            main_array = new int[variants_length, 2];
 
-            for (int i = 0; i < limit; i++)
-            {
-                for (int j = 0; j < limit; j++)
-                {
-                    a = array[i];
-                    b = array[j];
-                    if ((a > limit && b > limit) || a == 0 || b == 0 || a < b || a - b == 0)
+                    switch (operation)
                     {
-                        continue;
+                        case "+":
+                            condition = a + b > limit;
+                            break;
+                        case "-":
+                            condition = a - b == 0 || a < b;
+                            break;
+                        case "*":
+                            condition = a * b > limit;
+                            break;
+                        case "/":
+                            condition = a % b != 0 || a < b;
+                            break;
                     }
-                    else
-                    {
-                        main_array[k, 0] = a;
-                        main_array[k, 1] = b;
-                        k++;
-                    }
-                }
-            }
-        }
-        static void Multiplication(int limit, int[] array, out int[,] main_array) //генерація варіантів для множення
-        {
-            int a, b, k = 0;
-            int variants_length = 0; 
-            for(int i = 1; i<=limit; i++)
-            {
-                variants_length += limit / i;   // формула для підрахунку загальної кількості варіантів 
-            }
-            main_array = new int[variants_length, 2]; 
 
-            for (int i = 0; i < limit; i++)
-            {
-                for (int j = 0; j < limit; j++)
-                {
-                    a = array[i];
-                    b = array[j];
-                    if ((a * b > limit) || a == 0 || b == 0)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        main_array[k, 0] = a;
-                        main_array[k, 1] = b;
-                        k++;
-                    }
-                }
-            }
-        }
-        static void Division(int limit, int[] array, out int[,] main_array) // генерація варіантів для ділення
-        {
-            int a, b, k = 0;
-            int variants_length = 0;
-            for (int i = 1; i <= limit; i++) // формула для підрахунку загальної кількості варіантів 
-            {
-                for (int j = 1; j <= limit; j++)
-                {
-                    if (i % j != 0)
-                    {
-                        continue;
-                    }
-                    variants_length += 1; 
-                }
-            }
-            main_array = new int[variants_length, 2]; 
-
-            for (int i = 0; i < limit; i++)
-            {
-                for (int j = 0; j < limit; j++)
-                {
-                    a = array[i];
-                    b = array[j];
-                    if (a > limit || b > limit || a == 0 || b == 0 || a < b || a % b !=0)
+                    if (condition)
                     {
                         continue;
                     }
@@ -132,7 +58,7 @@ namespace project
             Console.Write("Введіть ліміт обчислень: ");
             int limit = Convert.ToInt32(Console.ReadLine());
 
-            GenerationExercise(count_exercises, out int count_right_user_answer, operation, limit);
+            GenerationExercise(ref count_exercises, out int count_right_user_answer, operation, limit);
             Console.WriteLine($"Результат: {count_right_user_answer} з {count_exercises} правильних відповідей!");
             Console.WriteLine();
             work = true;
@@ -176,35 +102,56 @@ namespace project
             }
             return right_answer;
         }
-        static void GenerationExercise(int count_exercises, out int count_right_user_answer, string operation, int limit) //генерація прикладів
+        static void GenerationExercise(ref int count_exercises, out int count_right_user_answer, string operation, int limit) //генерація прикладів
         {
             int[] array = new int[limit];
             for (int n = 0; n < limit; n++)
             {
                 array[n] = n + 1;
             }
-            int a, b, answer;
+            int a, b, answer, variants_length = 0;
             count_right_user_answer = 0;
-            int[,] main_array = null;
 
-            switch (operation)
+            switch (operation) // формули для підрахунку загальної кількості варіантів 
             {
                 case "+":
-                    Addition(limit, array, out main_array);
+                    variants_length = ((limit / 2) * (limit - 1));
                     break;
                 case "-":
-                    Subtraction(limit, array, out main_array);
+                    variants_length = ((limit / 2) * (limit - 1));
                     break;
                 case "*":
-                    Multiplication(limit, array, out main_array);
+                    for (int j = 1; j <= limit; j++)
+                    {
+                        variants_length += limit / j;
+                    }
                     break;
                 case "/":
-                    Division(limit, array, out main_array);
+                    for (int l = 1; l <= limit; l++) 
+                    {
+                        for (int j = 1; j <= limit; j++)
+                        {
+                            if (l % j != 0)
+                            {
+                                continue;
+                            }
+                            variants_length += 1;
+                        }
+                    }
                     break;
             }
+            CreateArray(limit, array, variants_length, operation, out int[,] main_array);
 
-            int i = (main_array.GetLength(0) / count_exercises)-1;
-            while (i < main_array.GetLength(0))
+            if (main_array.GetLength(0) < count_exercises)
+            {
+                count_exercises = main_array.GetLength(0);
+                Console.WriteLine("Кількість прикладів більша за можливі згенеровані приклади, виведеться можлива кількість без повторень");
+            }
+
+            int i = (main_array.GetLength(0) / count_exercises) - 1;
+            int r = 0;
+
+            while (i < main_array.GetLength(0) && r < count_exercises)
             {
                 a = main_array[i, 0];
                 b = main_array[i, 1];
@@ -213,6 +160,7 @@ namespace project
                 int right_answer = CheckRightAnswer(a, b, operation);
                 count_right_user_answer = (answer == right_answer) ? count_right_user_answer + 1 : count_right_user_answer;
                 i += (main_array.GetLength(0) / count_exercises);
+                r++;
             }
         }
         static void Main(string[] args)
@@ -254,7 +202,8 @@ namespace project
                         break;
                 }
             }
-            
+
         }
     }
 }
+
