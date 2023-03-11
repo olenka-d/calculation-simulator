@@ -1,4 +1,3 @@
-//ще тестуватиму на пошук помилок
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +45,7 @@ namespace project
                     {
                         main_array[k, 0] = a;
                         main_array[k, 1] = b;
+                        Console.WriteLine($"main_array[{k}, 0] = {a}, main_array[{k}, 1] = {b}");
                         k++;
                     }
                 }
@@ -109,16 +109,15 @@ namespace project
             {
                 array[n] = n + 1;
             }
-            int a, b, answer, variants_length = 0;
+            int a, b, answer; 
+            int variants_length = 0;
             count_right_user_answer = 0;
-
             switch (operation) // формули для підрахунку загальної кількості варіантів 
             {
                 case "+":
-                    variants_length = ((limit / 2) * (limit - 1));
-                    break;
                 case "-":
-                    variants_length = ((limit / 2) * (limit - 1));
+                    float support = ((float)limit / 2) * ((float)limit - 1);
+                    variants_length = Convert.ToInt32(support);
                     break;
                 case "*":
                     for (int j = 1; j <= limit; j++)
@@ -140,7 +139,7 @@ namespace project
                     }
                     break;
             }
-            CreateArray(limit, array, variants_length, operation, out int[,] main_array);
+            CreateArray(limit, array, (int)variants_length, operation, out int[,] main_array);
 
             if (main_array.GetLength(0) < count_exercises)
             {
@@ -206,4 +205,3 @@ namespace project
         }
     }
 }
-
