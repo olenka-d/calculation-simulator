@@ -45,7 +45,6 @@ namespace project
                     {
                         main_array[k, 0] = a;
                         main_array[k, 1] = b;
-                        Console.WriteLine($"main_array[{k}, 0] = {a}, main_array[{k}, 1] = {b}");
                         k++;
                     }
                 }
